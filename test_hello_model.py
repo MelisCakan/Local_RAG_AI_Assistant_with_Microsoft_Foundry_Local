@@ -30,9 +30,11 @@ for chunk in client.complete_streaming_chat([
         "content": "Hello, world! Please complete this greeting."
     }
 ]):
-    content = chunk.choices[0].delta.content
-    if content:
-        print(content, end="", flush=True)
+    #Check if the chunk has choices and print the content if it does
+    if chunk.choices:
+        content = chunk.choices[0].delta.content
+        if content:
+            print(content, end="", flush=True)
 
 print()
 

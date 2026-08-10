@@ -32,3 +32,21 @@ def main():
     response = embedding_client.generate_embedding(documents)
     doc_embeddings = [item.embedding for item in response.data]
     print(f"Indexed {len(doc_embeddings)} documents.")
+
+    def cosine_similarity(a, b):
+        #Compute cosine similarity between two vectors (RAG should find similar texts)
+        dot = sum(x * y for x, y in zip(a, b)) #dot product of these vectors
+        norm_a = math.sqrt(sum(x * x for x in a)) #length of vector a
+        norm_b = math.sqrt(sum(x * x for x in b)) #length of vector b
+        return dot / (norm_a * norm_b) if norm_a and norm_b else 0.0 #cosine similarity
+        #we need to divide because length of vectors affect dot product
+
+    def find_relevant(query_embedding, doc_embeddings, top_k=2):
+        #Return the indices and scores of the top-k most similar documents.
+        #query_embeddings: user embeds, doc_embeddings = document embeds, top_k=2 best two documents
+        scores = []
+        for i, doc_emb in enumerate(doc_embeddings):
+            score = cosine_similarity(query_embedding, doc_emb)
+            scores.append((i, score)) 
+        scores.sort(key=lambda x: x[1], reverse=True) #sort scores descending by scores
+        return scores[:top_k]
