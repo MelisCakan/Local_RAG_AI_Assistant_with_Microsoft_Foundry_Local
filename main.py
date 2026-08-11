@@ -87,6 +87,36 @@ def get_top_chunks(query, embedding_client, top_k=2):
 
     return results
 
+def initialize_models():
+    #Initialize the SDK
+    config = Configuration(app_name="foundry_local_rag")
+    FoundryLocalManager.initialize(config)
+    manager = FoundryLocalManager.instance
+
+    #------Download the embedding model--------
+    embedding_model = manager.catalog.get_model("qwen3-embedding-0.6b")
+    embedding_model.download(
+        lambda p: print(f"\rDownloading embedding model: {p:.1f}%", end="", flush=True)
+    )
+    print()
+
+    #Load the embedding model and get the embedding client
+    embedding_model.load()
+    embedding_client = embedding_model.get_embedding_client()
+
+    #------Download the chat model--------
+    chat_model = manager.catalog.get_model("phi-4-mini")
+    chat_model.download(
+        lambda p: print(f"\rDownloading chat model: {p:.1f}%", end="", flush=True)
+    )
+    print()
+
+    #Load the chat model and get the chat client
+    chat_model.load()
+    chat_client = chat_model.get_chat_client()
+
+    return embedding_client, chat_client
+
 def answer_query(query, embedding_client, chat_client):
     #Retrieve the top relevant chunks based on the query
     results = get_top_chunks(query, embedding_client)
@@ -136,32 +166,7 @@ def main():
     chunks = chunk_documents(documents)
     print(f"Created {len(chunks)} chunks.")
 
-    #Initialize the SDK
-    config = Configuration(app_name="foundry_local_rag")
-    FoundryLocalManager.initialize(config)
-    manager = FoundryLocalManager.instance
-
-    #------Download the embedding model--------
-    embedding_model = manager.catalog.get_model("qwen3-embedding-0.6b")
-    embedding_model.download(
-        lambda p: print(f"\rDownloading embedding model: {p:.1f}%", end="", flush=True)
-    )
-    print()
-
-    #Load the embedding model and get the embedding client
-    embedding_model.load()
-    embedding_client = embedding_model.get_embedding_client()
-
-    #------Download the chat model--------
-    chat_model = manager.catalog.get_model("phi-4-mini")
-    chat_model.download(
-        lambda p: print(f"\rDownloading chat model: {p:.1f}%", end="", flush=True)
-    )
-    print()
-
-    #Load the chat model and get the chat client
-    chat_model.load()
-    chat_client = chat_model.get_chat_client()
+    embedding_client, chat_client = initialize_models()
 
     #Embed the chunks and store the embeddings in a list
     texts = [chunk["content"] for chunk in chunks]
@@ -187,12 +192,15 @@ def main():
 
     while True:
         query = input("\nEnter your question (or type 'exit' to quit): ")
-        answer = answer_query(query, embedding_client, chat_client)
-        print("\nAnswer:")
-        print(answer)
+
         if query.lower() == "exit":
             print("Exiting the program.")
             break
+
+        answer = answer_query(query, embedding_client, chat_client)
+
+        print("\nAnswer:")
+        print(answer)
 
     
 
