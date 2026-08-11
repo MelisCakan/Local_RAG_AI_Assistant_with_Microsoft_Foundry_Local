@@ -1,6 +1,7 @@
 import math
 from foundry_local_sdk import Configuration, FoundryLocalManager
 from pathlib import Path
+from database import insert_document
 
 #Load documents from a folder and return a list of dictionaries with source and content
 def load_documents(folder_path):
@@ -87,6 +88,19 @@ def main():
         chunk_embeddings.append(response.data[0].embedding)
 
     print(f"Embedded {len(chunk_embeddings)} chunks.")
+
+    #Store the chunks and their embeddings in the database
+    inserted_count = 0 #Count of new chunks inserted into the database
+
+    for chunk, embedding in zip(chunks, chunk_embeddings):
+        inserted_count += insert_document( #Store the chunk in the database, if it already exists, it will not be inserted again
+            chunk["content"],
+            embedding,
+            chunk["source"]
+        )
+
+    print(f"Inserted {inserted_count} new chunks into the database.")
+        
 
 if __name__ == "__main__":
     main()
