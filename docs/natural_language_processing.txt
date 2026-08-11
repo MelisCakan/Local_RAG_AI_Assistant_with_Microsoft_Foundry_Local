@@ -1,0 +1,7 @@
+Natural Language Processing (NLP) is an interdisciplinary field sitting at the intersection of Artificial Intelligence and Linguistics. Its goal is to give computers the capability to understand, interpret, analyze, and generate human language. Human language is notoriously difficult for machines to process due to inherent ambiguities, idioms, context shifts, and nuanced expressions.
+
+Standard NLP pipelines typically begin with text preprocessing steps, including noise removal, stemming/lemmatization, stop-word filtering, and tokenization. Following preprocessing, numerical representation techniques such as Word Embeddings (e.g., Word2Vec, GloVe) are applied to map text into vector spaces that algorithms can process mathematically.
+
+While legacy NLP relied heavily on statistical modeling, modern advancements are entirely dominated by Deep Learning and Artificial Neural Networks. Early deep learning approaches utilized RNN and LSTM architectures for tasks like sentiment analysis, machine translation, and text summarization. However, these have largely been superseded by the revolutionary Transformer architecture.
+
+Today, Large Language Models (LLMs) such as GPT and Claude, along with Retrieval-Augmented Generation (RAG) frameworks, represent the state of the art in NLP. By converting text into dense semantic vector spaces, NLP enables artificial intelligence systems to perform context-aware reasoning and converse naturally with humans.

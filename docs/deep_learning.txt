@@ -1,0 +1,7 @@
+Deep Learning (DL) is a specialized subset of Machine Learning (ML) inspired by the structure and working principles of the human brain. While traditional machine learning algorithms often hit a performance plateau as data scales, deep learning models continuously improve their accuracy when supplied with larger volumes of data. This characteristic makes deep learning the primary engine driving the modern Artificial Intelligence revolution.
+
+A key distinction between deep learning and traditional ML approaches is the automation of Feature Extraction. In classical machine learning, human experts must manually identify relevant features within the dataset. In contrast, deep learning models ingest raw input data (such as raw image pixels) and automatically extract abstract representations through multiple hierarchical layers.
+
+The architecture of these models relies on Artificial Neural Networks (ANN) comprising numerous hidden layers. As the depth of the network increases, its capacity to represent complex, non-linear relationships in data deepens significantly. Executing these intensive matrix operations requires high-performance parallel processing hardware, such as GPUs and TPUs.
+
+Major breakthroughs in computer vision, speech recognition, autonomous driving, and Natural Language Processing (NLP) have been driven by deep learning. Architectures like Convolutional Neural Networks (CNN) and Recurrent Neural Networks (RNN) stand as fundamental milestones demonstrating the power of deep learning across diverse data modalities.
