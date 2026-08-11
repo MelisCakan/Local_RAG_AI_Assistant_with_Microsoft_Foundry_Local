@@ -185,13 +185,17 @@ def main():
 
     print(f"Inserted {inserted_count} new chunks into the database.")
 
+    while True:
+        query = input("\nEnter your question (or type 'exit' to quit): ")
+        answer = answer_query(query, embedding_client, chat_client)
+        print("\nAnswer:")
+        print(answer)
+        if query.lower() == "exit":
+            print("Exiting the program.")
+            break
 
-    query = "What is deep learning?"
+    
 
-    answer = answer_query(query, embedding_client, chat_client)
-
-    print("\nAnswer:")
-    print(answer)
         
 
 if __name__ == "__main__":
