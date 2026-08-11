@@ -1,7 +1,8 @@
 import math
 from foundry_local_sdk import Configuration, FoundryLocalManager
 from pathlib import Path
-from database import insert_document
+from database import insert_document, get_documents
+import json
 
 #Load documents from a folder and return a list of dictionaries with source and content
 def load_documents(folder_path):
@@ -52,6 +53,40 @@ def find_relevant(query_embedding, chunk_embeddings, top_k=2):
     scores.sort(key=lambda x: x[1], reverse=True) #sort scores descending by scores
     return scores[:top_k]
 
+def get_top_chunks(query, embedding_client, top_k=2):
+    # Embed the user's query
+    response = embedding_client.generate_embedding(query)
+    query_embedding = response.data[0].embedding
+
+    # Get all stored documents from SQLite
+    documents = get_documents()
+
+    # Convert stored embeddings from JSON strings back to Python lists
+    chunk_embeddings = [
+        json.loads(document[3])
+        for document in documents
+    ]
+
+    # Find the most similar chunks
+    top_results = find_relevant(
+        query_embedding,
+        chunk_embeddings,
+        top_k
+    )
+
+    results = []
+
+    for index, score in top_results:
+        document = documents[index]
+
+        results.append({
+            "source": document[1],
+            "content": document[2],
+            "score": score
+        })
+
+    return results
+
 
 def main():
 
@@ -100,6 +135,21 @@ def main():
         )
 
     print(f"Inserted {inserted_count} new chunks into the database.")
+
+
+    query = "What is deep learning?"
+
+    results = get_top_chunks(
+        query,
+        embedding_client
+    )
+
+    print("\nTop relevant chunks:")
+
+    for result in results:
+        print(f"\nSource: {result['source']}")
+        print(f"Score: {result['score']:.4f}")
+        print(f"Content: {result['content']}")
         
 
 if __name__ == "__main__":
