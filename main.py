@@ -87,6 +87,44 @@ def get_top_chunks(query, embedding_client, top_k=2):
 
     return results
 
+def answer_query(query, embedding_client, chat_client):
+    #Retrieve the top relevant chunks based on the query
+    results = get_top_chunks(query, embedding_client)
+
+    #Build the context from the retrieved chunks
+    context = "\n\n".join(
+        f"Source: {result['source']}\n{result['content']}"
+        for result in results
+    )
+
+    #Create the messages for the chat model
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a question-answering assistant for a local knowledge base.\n"
+                "You MUST answer using only the information provided in the context.\n"
+                "Do NOT use your own knowledge or make assumptions.\n"
+                "If the answer is not explicitly stated in the context, "
+                "respond exactly with: \"I don't know based on the provided context.\"\n"
+                "When you answer a question, always include the source document name(s) "
+                "at the end of your answer in the format: 'Sources: filename.txt'."
+            )
+        },
+        {
+            "role": "user",
+            "content": (
+                f"Context:\n{context}\n\n"
+                f"Question: {query}"
+            )
+        }
+    ]
+
+    # Generate the answer
+    response = chat_client.complete_chat(messages)
+    return response.choices[0].message.content
+
+
 
 def main():
 
@@ -103,7 +141,7 @@ def main():
     FoundryLocalManager.initialize(config)
     manager = FoundryLocalManager.instance
 
-    #Load the embedding model
+    #------Download the embedding model--------
     embedding_model = manager.catalog.get_model("qwen3-embedding-0.6b")
     embedding_model.download(
         lambda p: print(f"\rDownloading embedding model: {p:.1f}%", end="", flush=True)
@@ -113,6 +151,17 @@ def main():
     #Load the embedding model and get the embedding client
     embedding_model.load()
     embedding_client = embedding_model.get_embedding_client()
+
+    #------Download the chat model--------
+    chat_model = manager.catalog.get_model("phi-4-mini")
+    chat_model.download(
+        lambda p: print(f"\rDownloading chat model: {p:.1f}%", end="", flush=True)
+    )
+    print()
+
+    #Load the chat model and get the chat client
+    chat_model.load()
+    chat_client = chat_model.get_chat_client()
 
     #Embed the chunks and store the embeddings in a list
     texts = [chunk["content"] for chunk in chunks]
@@ -139,17 +188,10 @@ def main():
 
     query = "What is deep learning?"
 
-    results = get_top_chunks(
-        query,
-        embedding_client
-    )
+    answer = answer_query(query, embedding_client, chat_client)
 
-    print("\nTop relevant chunks:")
-
-    for result in results:
-        print(f"\nSource: {result['source']}")
-        print(f"Score: {result['score']:.4f}")
-        print(f"Content: {result['content']}")
+    print("\nAnswer:")
+    print(answer)
         
 
 if __name__ == "__main__":
