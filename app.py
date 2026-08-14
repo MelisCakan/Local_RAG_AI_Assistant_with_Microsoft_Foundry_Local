@@ -4,7 +4,13 @@ from tkinter import filedialog, messagebox
 
 import customtkinter as ctk
 
-from main import answer_query, delete_document, initialize_models, ingest_document_file, list_uploaded_documents
+from src.rag_core import (
+    answer_query,
+    delete_document,
+    initialize_models,
+    ingest_document_file,
+    list_uploaded_documents,
+)
 
 
 ctk.set_appearance_mode("dark")
