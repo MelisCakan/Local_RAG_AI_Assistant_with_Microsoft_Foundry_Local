@@ -137,6 +137,9 @@ def list_uploaded_documents():
 
 
 def answer_query(query, embedding_client, chat_client):
+    if not query or not query.strip():
+        return "Please enter a question."
+
     results = get_top_chunks(query, embedding_client)
 
     if not results:
@@ -151,11 +154,11 @@ def answer_query(query, embedding_client, chat_client):
         {
             "role": "system",
             "content": (
-                "You are a question-answering assistant for a local knowledge base.\n"
-                "You MUST answer using only the information provided in the context.\n"
                 "Do NOT use your own knowledge or make assumptions.\n"
                 "If the answer is not explicitly stated in the context, "
                 "respond exactly with: \"I don't know based on the provided context.\"\n"
+                "Keep your answer concise and directly answer the question. "
+                "Use a maximum of 3-4 sentences unless more detail is necessary.\n"
                 "When you answer a question, always include the source document name(s) "
                 "at the end of your answer in the format: 'Sources: filename.txt'."
             ),
@@ -170,4 +173,5 @@ def answer_query(query, embedding_client, chat_client):
     ]
 
     response = chat_client.complete_chat(messages)
+
     return response.choices[0].message.content

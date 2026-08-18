@@ -1,9 +1,14 @@
 import json
 import sqlite3
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DB_PATH = BASE_DIR / "rag_documents.db"
 
 
 def get_connection():
-    connection = sqlite3.connect("rag_documents.db")
+    connection = sqlite3.connect(DB_PATH)
     connection.execute(
         """
         CREATE TABLE IF NOT EXISTS documents(

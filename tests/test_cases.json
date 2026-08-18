@@ -1,0 +1,26 @@
+[
+    {
+        "id": "T01",
+        "category": "answerable",
+        "query": "What is AI?",
+        "expected_behavior": "The model should provide a clear and concise explanation of AI based on the information in the documents."
+    },
+    {
+        "id": "T02",
+        "category": "answerable",
+        "query": "Explain the concept of machine learning.",
+        "expected_behavior": "The model should explain machine learning based on the information in the documents."
+    },
+    {
+        "id": "T03",
+        "category": "unanswerable",
+        "query": "What is the meaning of life?",
+        "expected_behavior": "The model should indicate that the information is not available in the documents."
+    },
+    {
+        "id": "T04",
+        "category": "edge_case",
+        "query": "",
+        "expected_behavior": "The assistant should handle empty input appropriately."
+    }
+]
